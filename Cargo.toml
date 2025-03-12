@@ -8,3 +8,6 @@ crate-type = ["cdylib"]
 
 [dependencies]
 log = "0.4"
+spinlock = { git = "https://github.com/Starry-OS/spinlock.git" }
+# spin = { version = "0.9", features = ["use_ticket_mutex"] }
+buddy_system_allocator = "0.6"

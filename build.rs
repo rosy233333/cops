@@ -6,4 +6,5 @@ fn main() {
     println!("cargo:rustc-link-arg=-T{}/cops.lds", pwd.display());
     println!("cargo:rustc-link-arg=-soname=libcops.so");
     println!("cargo:rustc-link-arg=-fPIC");
+    println!("cargo:rustc-link-arg=--no-undefined");
 }
