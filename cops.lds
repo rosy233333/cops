@@ -1,11 +1,10 @@
 OUTPUT_ARCH(riscv)
 
 PAGE_SIZE = 0x1000;
-VVAR_PAGES = 2;
 
 SECTIONS
 {
-	PROVIDE(vdso_data = . - VVAR_PAGES * PAGE_SIZE);
+	PROVIDE(vdso_data = . - 2 * 4 * PAGE_SIZE);
 	. = SIZEOF_HEADERS;
 
 	.hash		: { *(.hash) }			:text

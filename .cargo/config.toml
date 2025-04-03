@@ -4,3 +4,7 @@ target-dir = "../target"
 
 [target.riscv64gc-unknown-linux-musl]
 linker = "riscv64-linux-musl-ld"
+
+[unstable]
+build-std-features = ["compiler-builtins-mem"]
+build-std = ["core", "compiler_builtins", "alloc"]
