@@ -1,16 +1,14 @@
 use crate::{allocator, id::TaskId, percpu, processor::Processor};
 
 #[no_mangle]
-pub extern "C" fn init_primary(max_cpu: usize, cpu_id: usize) {
+pub extern "C" fn init_primary(cpu_id: usize) {
     allocator::init();
-    percpu::init_percpu_primary(max_cpu, cpu_id);
-    percpu::setup_percpu(cpu_id);
+    percpu::init_percpu_primary(cpu_id);
 }
 
 #[no_mangle]
-pub extern "C" fn init_secondary(max_cpu: usize, cpu_id: usize) {
-    percpu::init_percpu_secondary(max_cpu, cpu_id);
-    percpu::setup_percpu(cpu_id);
+pub extern "C" fn init_secondary(cpu_id: usize) {
+    percpu::init_percpu_secondary(cpu_id);
 }
 
 #[no_mangle]

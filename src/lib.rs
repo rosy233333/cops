@@ -1,5 +1,5 @@
 //!
-#![no_std]
+#![cfg_attr(not(test), no_std)]
 #![no_main]
 #![feature(lang_items)]
 #![allow(internal_features, unused, non_snake_case)]
@@ -8,11 +8,26 @@ mod api;
 mod id;
 mod percpu;
 mod processor;
+
+use allocator::DATA_OFFSET;
 pub use api::*;
 
 extern crate alloc;
 
-pub(crate) const PAGE_SIZE: usize = 0x1000;
+#[no_mangle]
+pub(crate) fn get_data_base() -> usize {
+    // 暂时使用这个量来对齐，只要代码的大小不超过 1G 就可以找到数据段的基址
+    const DATA_ALIGN: usize = 0xFFFF_FFFF_C000_0000;
+    let mut pc = 0usize;
+    unsafe {
+        core::arch::asm!(
+            "auipc {pc}, 0",
+            pc = out(reg) pc,
+        );
+    }
+    (pc & DATA_ALIGN) - DATA_OFFSET
+    // 0
+}
 
 #[cfg(feature = "no_std")]
 mod lang_item {
@@ -23,6 +38,9 @@ mod lang_item {
 
     #[panic_handler]
     fn panic(_info: &core::panic::PanicInfo) -> ! {
+        unsafe {
+            core::arch::asm!("ebreak");
+        }
         unreachable!()
     }
 

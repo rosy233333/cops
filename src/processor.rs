@@ -4,17 +4,18 @@ use core::{
     cell::UnsafeCell,
     sync::atomic::{AtomicUsize, Ordering},
 };
-use crossbeam::atomic::AtomicCell;
-use crossbeam::queue::SegQueue;
+use queue::AtomicCell;
+use queue::LockFreeQueue;
 use spin::Lazy;
-use spinlock::Spinlock;
 
 /// 这个数据结构只能使用无锁的数据结构，因为在内核和用户态使用的锁不一样
 /// 此外，还需要额外的结构来存放每个 CPU 上使用的数据，因为内核有自己重新定义的数据
 /// 可以将 percpu 的初始化放在这里进行，其他的包中不需要使用 percpu 数据
+#[derive(Debug)]
+#[repr(C, align(64))]
 pub struct Processor {
     /// Processor ready_queue
-    ready_queue: SegQueue<TaskId>,
+    ready_queue: LockFreeQueue<TaskId>,
     ///
     current_task: AtomicCell<Option<TaskId>>,
 }
@@ -23,9 +24,10 @@ unsafe impl Sync for Processor {}
 unsafe impl Send for Processor {}
 
 impl Processor {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
+        let queue = LockFreeQueue::new();
         Processor {
-            ready_queue: SegQueue::new(),
+            ready_queue: queue,
             current_task: AtomicCell::new(None),
         }
     }
