@@ -1,6 +1,6 @@
 use crate::get_data_base;
 use core::ptr::NonNull;
-use heap::LockedHeap;
+use pilf_buddy_alloc::LockedHeap;
 
 pub(crate) const PAGE_SIZE: usize = 0x1000;
 pub(crate) const DATA_OFFSET: usize = 0x1000;
